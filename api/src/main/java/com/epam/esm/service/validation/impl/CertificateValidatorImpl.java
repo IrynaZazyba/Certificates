@@ -4,6 +4,8 @@ import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.service.validation.Validator;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class CertificateValidatorImpl implements Validator<CertificateDto> {
 
@@ -11,20 +13,20 @@ public class CertificateValidatorImpl implements Validator<CertificateDto> {
     private static final int DESCRIPTION_SIZE = 300;
 
     public boolean validate(CertificateDto certificateDto) {
-        if (certificateDto.getDescription() != null && certificateDto.getName() != null) {
+        if (!Objects.isNull(certificateDto.getDescription()) && !Objects.isNull(certificateDto.getName())) {
             return certificateDto.getName().length() < NAME_SIZE
                     && certificateDto.getDescription().length() < DESCRIPTION_SIZE;
         }
 
-        if (certificateDto.getDescription() != null && certificateDto.getName() == null) {
+        if (!Objects.isNull(certificateDto.getDescription()) && Objects.isNull(certificateDto.getName())) {
             return certificateDto.getDescription().length() < DESCRIPTION_SIZE;
         }
 
-        if (certificateDto.getDescription() == null && certificateDto.getName() != null) {
+        if (Objects.isNull(certificateDto.getDescription()) && !Objects.isNull(certificateDto.getName())) {
             return certificateDto.getName().length() < NAME_SIZE;
         }
 
-        return certificateDto.getDescription() == null && certificateDto.getName() == null;
+        return Objects.isNull(certificateDto.getDescription()) && Objects.isNull(certificateDto.getName());
     }
 
 }

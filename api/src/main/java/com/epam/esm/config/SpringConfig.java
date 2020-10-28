@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration
 @ComponentScan("com.epam.esm")
@@ -50,7 +51,8 @@ public class SpringConfig implements TransactionManagementConfigurer {
         dataSource.setUsername(env.getProperty(DATABASE_USERNAME));
         dataSource.setPassword(env.getProperty(DATABASE_PASSWORD));
         String initSizeProperty = env.getProperty(DATABASE_INIT_SIZE);
-        dataSource.setInitialSize(initSizeProperty != null ? Integer.valueOf(initSizeProperty) : DEFAULT_INITIAL_SIZE);
+        dataSource.setInitialSize
+                (!Objects.isNull(initSizeProperty) ? Integer.valueOf(initSizeProperty) : DEFAULT_INITIAL_SIZE);
         return dataSource;
     }
 

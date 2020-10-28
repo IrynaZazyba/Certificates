@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,7 +60,7 @@ public class CertificateServiceImpl implements CertificateService {
         model.setCreateDate(LocalDateTime.now());
         model.setLastUpdateDate(LocalDateTime.now());
         Long insertedCertificateId = certificateDao.insertCertificate(model);
-        if (tags != null) {
+        if (!Objects.isNull(tags)) {
             List<Long> insertedTagsIds = tags.stream().map(tagService::createTag).collect(Collectors.toList());
             certificateDao.insertCertificateTagLink(insertedCertificateId, insertedTagsIds);
         }
@@ -95,7 +96,7 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setLastUpdateDate(LocalDateTime.now());
         certificateDao.updateCertificate(certificate);
         List<TagDto> tags = certificateDto.getTags();
-        if (tags != null) {
+        if (!Objects.isNull(tags)) {
             List<Long> insertedTagsIds = tags.stream().map(tagService::createTag).collect(Collectors.toList());
             certificateDao.insertCertificateTagLink(certificateDto.getId(), insertedTagsIds);
         }

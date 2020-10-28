@@ -118,12 +118,12 @@ public class CertificateDaoImpl implements CertificateDao {
         stringBuilder.append(" lastUpdateDate=?,");
         data.add(certificate.getLastUpdateDate());
 
-        if (certificate.getName() != null) {
+        if (!Objects.isNull(certificate.getName())) {
             stringBuilder.append(" name=?,");
             data.add(certificate.getName());
         }
 
-        if (certificate.getDescription() != null) {
+        if (!Objects.isNull(certificate.getDescription())) {
             stringBuilder.append(" description=?,");
             data.add(certificate.getDescription());
         }
@@ -142,26 +142,26 @@ public class CertificateDaoImpl implements CertificateDao {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(GET_BY_FILTER);
 
-        if (filter.getTagName() != null)
+        if (!Objects.isNull(filter.getTagName()))
             stringBuilder.append(" AND tag.name = '").append(filter.getTagName()).append("'");
 
-        if (filter.getSearchName() != null)
+        if (!Objects.isNull(filter.getSearchName()))
             stringBuilder.append(" AND certificate.name LIKE '%").append(filter.getSearchName()).append("%'");
 
-        if (filter.getSearchDescription() != null)
+        if (!Objects.isNull(filter.getSearchDescription()))
             stringBuilder.append(" AND certificate.description LIKE '%").
                     append(filter.getSearchDescription()).append("%'");
 
-        if (filter.getSort() != null && filter.getSort().equals("name"))
+        if (!Objects.isNull(filter.getSort()) && filter.getSort().equals("name"))
             stringBuilder.append(" ORDER BY ").append("certificate.name");
 
-        if (filter.getSort() != null && filter.getSort().equals("createDate"))
+        if (!Objects.isNull(filter.getSort()) && filter.getSort().equals("createDate"))
             stringBuilder.append(" ORDER BY ").append("certificate.createDate");
 
-        if (filter.getSort() != null && filter.getOrder() != null && filter.getOrder().equals("ASC"))
+        if (!Objects.isNull(filter.getSort()) && !Objects.isNull(filter.getOrder()) && filter.getOrder().equals("ASC"))
             stringBuilder.append(" ASC");
 
-        if (filter.getSort() != null && filter.getOrder() != null && filter.getOrder().equals("DESC"))
+        if (!Objects.isNull(filter.getSort()) && !Objects.isNull(filter.getOrder()) && filter.getOrder().equals("DESC"))
             stringBuilder.append(" DESC");
 
         return String.valueOf(stringBuilder);
