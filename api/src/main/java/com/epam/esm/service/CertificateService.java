@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.FilterDto;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -11,13 +12,13 @@ public interface CertificateService {
 
     List<CertificateDto> getAll();
 
-    CertificateDto createCertificate(CertificateDto certificate);
+    CertificateDto create(CertificateDto certificate);
 
-    void deleteCertificate(Long id);
+    void delete(Long id);
 
-    List<CertificateDto> filterCertificate(FilterDto filterDto);
+    List<CertificateDto> filter(FilterDto filterDto);
 
-    void updateCertificate(CertificateDto certificateDto);
+    void update(CertificateDto certificateDto);
 
-    void linkTagToCertificate(Long certificateId, Long tagId);
+    void linkTag(Long certificateId, Long tagId);
 }

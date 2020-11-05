@@ -48,30 +48,30 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional
     @Override
-    public CertificateDto createCertificate(CertificateDto certificate) {
+    public CertificateDto create(CertificateDto certificate) {
         List<TagDto> tags = certificate.getTags();
         Certificate model = certificateMapper.toModel(certificate);
         model.setCreateDate(Instant.now());
         model.setLastUpdateDate(Instant.now());
         Certificate insertedCertificate = certificateDao.insert(model);
         List<Long> insertedTagsIds = tags.stream()
-                .map(tagService::createTag)
+                .map(tagService::create)
                 .map(TagDto::getId)
                 .collect(Collectors.toList());
-        certificateDao.insertCertificateTagLink(insertedCertificate.getId(), insertedTagsIds);
+        certificateDao.insertTagLink(insertedCertificate.getId(), insertedTagsIds);
         return certificateMapper.fromModel(insertedCertificate);
 
     }
 
     @Transactional
     @Override
-    public void deleteCertificate(Long id) {
-        certificateDao.deleteCertificateLink(id);
+    public void delete(Long id) {
+        certificateDao.deleteTagLink(id);
         certificateDao.delete(id);
     }
 
     @Override
-    public List<CertificateDto> filterCertificate(FilterDto filterDto) {
+    public List<CertificateDto> filter(FilterDto filterDto) {
         Filter filter = filterMapper.toModel(filterDto);
         List<CertificateDto> certificates = new ArrayList<>();
         Map<Certificate, List<Tag>> certificateListMap = certificateDao.filterCertificate(filter);
@@ -87,23 +87,23 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional
     @Override
-    public void updateCertificate(CertificateDto certificateDto) {
+    public void update(CertificateDto certificateDto) {
         Certificate certificate = certificateMapper.toModel(certificateDto);
         certificate.setLastUpdateDate(Instant.now());
         certificateDao.update(certificate);
         List<TagDto> tags = certificateDto.getTags();
         List<Long> insertedTagsIds = tags.stream()
-                .map(tagService::createTag)
+                .map(tagService::create)
                 .map(TagDto::getId)
                 .collect(Collectors.toList());
-        certificateDao.insertCertificateTagLink(certificateDto.getId(), insertedTagsIds);
+        certificateDao.insertTagLink(certificateDto.getId(), insertedTagsIds);
     }
 
     @Override
-    public void linkTagToCertificate(Long certificateId, Long tagId) {
+    public void linkTag(Long certificateId, Long tagId) {
         certificateDao.getOne(certificateId);
-        tagService.getTag(tagId);
-        certificateDao.insertCertificateTagLink(certificateId, Collections.singletonList(tagId));
+        tagService.getOne(tagId);
+        certificateDao.insertTagLink(certificateId, Collections.singletonList(tagId));
     }
 
 }

@@ -1,16 +1,17 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.TagDto;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
 public interface TagService {
 
-    TagDto getTag(Long id);
+    TagDto getOne(Long id);
 
-    List<TagDto> getAllTags();
+    List<TagDto> getAll();
 
-    TagDto createTag(TagDto tag);
+    TagDto create(TagDto tag);
 
-    void deleteTag(Long id);
+    void delete(Long id);
 }

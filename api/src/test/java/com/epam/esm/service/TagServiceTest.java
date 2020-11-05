@@ -43,7 +43,7 @@ public class TagServiceTest {
         Mockito.when(tagMapper.fromModelWithoutCertificate(tag)).thenReturn(tagDto);
         Mockito.when(mockTagDao.getOne(1L)).thenReturn(Optional.of(tag));
 
-        Assertions.assertEquals(tagDto, tagService.getTag(1L));
+        Assertions.assertEquals(tagDto, tagService.getOne(1L));
         Mockito.verify(mockTagDao, times(1)).getOne(1L);
     }
 
@@ -55,7 +55,7 @@ public class TagServiceTest {
         Mockito.when(tagMapper.fromModelWithoutCertificate(tag)).thenReturn(tagDto);
         Mockito.when(mockTagDao.getAll()).thenReturn(tagList);
 
-        Assertions.assertEquals(tagDtoList, tagService.getAllTags());
+        Assertions.assertEquals(tagDtoList, tagService.getAll());
         Mockito.verify(mockTagDao, times(1)).getAll();
     }
 
@@ -66,7 +66,7 @@ public class TagServiceTest {
         Mockito.when(mockTagDao.insert(tag)).thenReturn(tag);
         Mockito.when(tagMapper.fromModelWithoutCertificate(tag)).thenReturn(tagDto);
 
-        Assertions.assertEquals(tagDto, tagService.createTag(tagDto));
+        Assertions.assertEquals(tagDto, tagService.create(tagDto));
         Mockito.verify(mockTagDao, times(1)).getByName(tag.getName());
     }
 
@@ -75,7 +75,7 @@ public class TagServiceTest {
         Mockito.doNothing().when(mockTagDao).delete(5L);
         Mockito.doNothing().when(mockTagDao).deleteTagLink(5L);
 
-        tagService.deleteTag(5L);
+        tagService.delete(5L);
 
         Mockito.verify(mockTagDao, times(1)).delete(5L);
         Mockito.verify(mockTagDao, times(1)).deleteTagLink(5L);

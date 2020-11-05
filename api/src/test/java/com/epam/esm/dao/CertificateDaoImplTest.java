@@ -5,10 +5,11 @@ import com.epam.esm.dao.mapper.CertificateExtractor;
 import com.epam.esm.dao.mapper.CertificateRowMapper;
 import com.epam.esm.domain.Certificate;
 import com.epam.esm.domain.Filter;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -27,7 +28,7 @@ public class CertificateDaoImplTest {
     private static CertificateDao certificateDao;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         embeddedDatabase = new EmbeddedDatabaseBuilder()
                 .addDefaultScripts()
@@ -40,7 +41,7 @@ public class CertificateDaoImplTest {
     }
 
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         embeddedDatabase.shutdown();
     }
@@ -74,7 +75,7 @@ public class CertificateDaoImplTest {
     @Test
     public void deleteCertificate() {
         Assertions.assertNotNull(certificateDao.getOne(124L));
-        certificateDao.deleteCertificateLink(124L);
+        certificateDao.deleteTagLink(124L);
         certificateDao.delete(124L);
         Assertions.assertEquals(Optional.empty(), certificateDao.getOne(124L));
     }
@@ -117,7 +118,7 @@ public class CertificateDaoImplTest {
     public void deleteCertificateLink() {
         Assertions.assertNotNull(certificateDao.getOne(124L));
         Assertions.assertThrows(Exception.class, () -> certificateDao.delete(124L));
-        certificateDao.deleteCertificateLink(124L);
+        certificateDao.deleteTagLink(124L);
         certificateDao.delete(124L);
         Assertions.assertEquals(Optional.empty(), certificateDao.getOne(124L));
     }
@@ -126,7 +127,7 @@ public class CertificateDaoImplTest {
     public void insertCertificateTagLink() {
         Long certificateId = 124L;
         List<Long> tagsId = List.of(111L, 112L);
-        certificateDao.insertCertificateTagLink(certificateId, tagsId);
+        certificateDao.insertTagLink(certificateId, tagsId);
         String query = "SELECT count(`certificate_id`) FROM `certificate_has_tag` WHERE certificate_id=?";
         int rowCount = this.jdbcTemplate.queryForObject(query, Integer.class, 124);
         Assertions.assertEquals(3, rowCount);

@@ -76,12 +76,12 @@ public class CertificateServiceTest {
 
     @Test
     void deleteCertificate() {
-        Mockito.doNothing().when(mockCertificateDao).deleteCertificateLink(5L);
+        Mockito.doNothing().when(mockCertificateDao).deleteTagLink(5L);
         Mockito.doNothing().when(mockCertificateDao).delete(5L);
 
-        certificateService.deleteCertificate(5L);
+        certificateService.delete(5L);
 
-        Mockito.verify(mockCertificateDao, times(1)).deleteCertificateLink(5L);
+        Mockito.verify(mockCertificateDao, times(1)).deleteTagLink(5L);
         Mockito.verify(mockCertificateDao, times(1)).delete(5L);
     }
 
@@ -90,12 +90,12 @@ public class CertificateServiceTest {
 
         Mockito.when(certificateMapper.toModel(certificateDto)).thenReturn(certificate);
         Mockito.when(mockCertificateDao.insert(certificate)).thenReturn(certificate);
-        Mockito.when(mockTagService.createTag(boatDto)).thenReturn(boatDto);
+        Mockito.when(mockTagService.create(boatDto)).thenReturn(boatDto);
         Mockito.doNothing().when(mockCertificateDao)
-                .insertCertificateTagLink(1L, Collections.singletonList(7L));
+                .insertTagLink(1L, Collections.singletonList(7L));
         Mockito.when(certificateMapper.fromModel(certificate)).thenReturn(certificateDto);
 
-        Assertions.assertEquals(certificateDto, certificateService.createCertificate(certificateDto));
+        Assertions.assertEquals(certificateDto, certificateService.create(certificateDto));
         Mockito.verify(mockCertificateDao, times(1)).insert(certificate);
 
     }
@@ -105,15 +105,15 @@ public class CertificateServiceTest {
 
         Mockito.when(certificateMapper.toModel(certificateDto)).thenReturn(certificate);
         Mockito.doNothing().when(mockCertificateDao).update(certificate);
-        Mockito.when(mockTagService.createTag(boatDto)).thenReturn(boatDto);
+        Mockito.when(mockTagService.create(boatDto)).thenReturn(boatDto);
         Mockito.doNothing().when(mockCertificateDao)
-                .insertCertificateTagLink(1L, Collections.singletonList(7L));
+                .insertTagLink(1L, Collections.singletonList(7L));
 
-        certificateService.updateCertificate(certificateDto);
+        certificateService.update(certificateDto);
 
         Mockito.verify(mockCertificateDao, times(1)).update(certificate);
         Mockito.verify(mockCertificateDao,
-                times(1)).insertCertificateTagLink(1L, Collections.singletonList(7L));
+                times(1)).insertTagLink(1L, Collections.singletonList(7L));
     }
 
 }

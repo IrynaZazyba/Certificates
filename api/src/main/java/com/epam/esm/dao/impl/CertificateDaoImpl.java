@@ -86,12 +86,12 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    public void insertCertificateTagLink(Long certificateId, List<Long> tagsId) {
+    public void insertTagLink(Long certificateId, List<Long> tagsId) {
         tagsId.forEach(e -> this.jdbcTemplate.update(INSERT_CERTIFICATE_TAG_LINK, certificateId, e));
     }
 
     @Override
-    public void deleteCertificateLink(Long id) {
+    public void deleteTagLink(Long id) {
         this.jdbcTemplate.update(DELETE_CERTIFICATE_LINK, id);
     }
 

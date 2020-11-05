@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +23,7 @@ import java.util.Objects;
 @ComponentScan("com.epam.esm")
 @EnableWebMvc
 @EnableTransactionManagement
-@PropertySources({@PropertySource("classpath:application-prod.properties")})
+@PropertySource("classpath:application-prod.properties")
 public class SpringConfig implements TransactionManagementConfigurer {
 
     private static final int DEFAULT_INITIAL_SIZE = 3;

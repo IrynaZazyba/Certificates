@@ -37,7 +37,7 @@ public class TagController {
      */
     @RequestMapping(value = "/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public TagDto getTag(@PathVariable("id") Long id) {
-        return tagService.getTag(id);
+        return tagService.getOne(id);
     }
 
     /**
@@ -48,7 +48,7 @@ public class TagController {
     @RequestMapping(method = GET)
     @ResponseBody
     public List<TagDto> getAllTag() {
-        return tagService.getAllTags();
+        return tagService.getAll();
     }
 
     /**
@@ -61,9 +61,9 @@ public class TagController {
     public TagDto createTag(@RequestBody TagDto tag, BindingResult bindingResult) {
         tagValidator.validate(tag, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new InvalidUserDataException("Validation exception: ",bindingResult);
+            throw new InvalidUserDataException("Validation exception: ", bindingResult);
         }
-        return tagService.createTag(tag);
+        return tagService.create(tag);
     }
 
     /**
@@ -74,6 +74,6 @@ public class TagController {
      */
     @RequestMapping(value = "/{id}", method = DELETE)
     public void deleteTag(@PathVariable("id") Long id) {
-        tagService.deleteTag(id);
+        tagService.delete(id);
     }
 }

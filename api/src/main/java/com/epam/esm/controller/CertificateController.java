@@ -64,9 +64,9 @@ public class CertificateController {
     public CertificateDto createCertificate(@RequestBody CertificateDto certificate, BindingResult bindingResult) {
         certificateValidator.validate(certificate, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new InvalidUserDataException("Validation exception: ",bindingResult);
+            throw new InvalidUserDataException("Validation exception: ", bindingResult);
         }
-        return certificateService.createCertificate(certificate);
+        return certificateService.create(certificate);
     }
 
     /**
@@ -77,7 +77,7 @@ public class CertificateController {
      */
     @RequestMapping(value = "/{id}", method = DELETE)
     public void deleteCertificate(@PathVariable("id") Long id) {
-        certificateService.deleteCertificate(id);
+        certificateService.delete(id);
     }
 
     /**
@@ -94,9 +94,9 @@ public class CertificateController {
         certificateDto.setId(id);
         certificateValidator.validate(certificateDto, bindingResult);
         if (bindingResult.hasErrors()) {
-            throw new InvalidUserDataException("Validation exception: ",bindingResult);
+            throw new InvalidUserDataException("Validation exception: ", bindingResult);
         }
-        certificateService.updateCertificate(certificateDto);
+        certificateService.update(certificateDto);
     }
 
     /**
@@ -108,7 +108,7 @@ public class CertificateController {
      */
     @RequestMapping(value = "/filter", method = GET)
     public List<CertificateDto> filterCertificates(FilterDto filter) {
-        return certificateService.filterCertificate(filter);
+        return certificateService.filter(filter);
     }
 
     /**
@@ -119,7 +119,7 @@ public class CertificateController {
      */
     @RequestMapping(value = "/{certificateId}/tags/{tagId}", method = PUT)
     public void linkTagToCertificate(@PathVariable("certificateId") Long certificateId, @PathVariable("tagId") Long tagId) {
-        certificateService.linkTagToCertificate(certificateId, tagId);
+        certificateService.linkTag(certificateId, tagId);
     }
 
 

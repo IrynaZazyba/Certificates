@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface CertificateDao extends Dao<Certificate> {
 
-    void insertCertificateTagLink(Long certificateId, List<Long> tagsId);
+    void insertTagLink(Long certificateId, List<Long> tagsId);
 
-    void deleteCertificateLink(Long id);
+    void deleteTagLink(Long id);
 
     Map<Certificate, List<Tag>> filterCertificate(Filter filter);
 

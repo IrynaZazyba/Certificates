@@ -23,18 +23,18 @@ public class TagServiceImpl implements TagService {
     private final TagMapper tagMapper;
 
     @Override
-    public TagDto getTag(Long id) {
+    public TagDto getOne(Long id) {
         Tag tag = tagDao.getOne(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found", id));
         return tagMapper.fromModelWithoutCertificate(tag);
     }
 
     @Override
-    public List<TagDto> getAllTags() {
+    public List<TagDto> getAll() {
         return tagDao.getAll().stream().map(tagMapper::fromModelWithoutCertificate).collect(Collectors.toList());
     }
 
     @Override
-    public TagDto createTag(TagDto tag) {
+    public TagDto create(TagDto tag) {
         Optional<Tag> byName = tagDao.getByName(tag.getName());
         if (byName.isEmpty()) {
             Tag insertedTag = tagDao.insert(tagMapper.toModelWithoutCertificate(tag));
@@ -46,7 +46,7 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public void deleteTag(Long id) {
+    public void delete(Long id) {
         tagDao.deleteTagLink(id);
         tagDao.delete(id);
     }
