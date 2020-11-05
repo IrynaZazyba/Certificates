@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -23,15 +24,15 @@ import java.util.Objects;
 @ComponentScan("com.epam.esm")
 @EnableWebMvc
 @EnableTransactionManagement
-@PropertySources({@PropertySource("classpath:application-${spring.profiles.active}.properties")})
+@PropertySources({@PropertySource("classpath:application-prod.properties")})
 public class SpringConfig implements TransactionManagementConfigurer {
 
-    private final static int DEFAULT_INITIAL_SIZE = 3;
-    private final static String DATABASE_DRIVER = "ds.database-driver";
-    private final static String DATABASE_URL = "ds.url";
-    private final static String DATABASE_USERNAME = "ds.username";
-    private final static String DATABASE_PASSWORD = "ds.password";
-    private final static String DATABASE_INIT_SIZE = "db.initial-size";
+    private static final int DEFAULT_INITIAL_SIZE = 3;
+    private static final String DATABASE_DRIVER = "ds.database-driver";
+    private static final String DATABASE_URL = "ds.url";
+    private static final String DATABASE_USERNAME = "ds.username";
+    private static final String DATABASE_PASSWORD = "ds.password";
+    private static final String DATABASE_INIT_SIZE = "db.initial-size";
 
     private final ApplicationContext applicationContext;
 
@@ -56,6 +57,7 @@ public class SpringConfig implements TransactionManagementConfigurer {
         return dataSource;
     }
 
+
     @Bean
     public PlatformTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
@@ -69,6 +71,14 @@ public class SpringConfig implements TransactionManagementConfigurer {
     @Bean
     public JdbcTemplate getJdbcTemplate() {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages/msg");
+        messageSource.setUseCodeAsDefaultMessage(true);
+        return messageSource;
     }
 
 }

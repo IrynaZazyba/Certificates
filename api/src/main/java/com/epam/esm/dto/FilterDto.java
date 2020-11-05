@@ -14,7 +14,7 @@ public class FilterDto {
     private String sort;
     private String order;
     private String tagName;
-    private String searchName;
-    private String searchDescription;
+    private String name;
+    private String description;
 
 }

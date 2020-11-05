@@ -13,7 +13,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.epam.esm.dao.mapper.MapperConstant.*;
+import static com.epam.esm.dao.mapper.MapperConstant.CERTIFICATE_CREATE_DATE;
+import static com.epam.esm.dao.mapper.MapperConstant.CERTIFICATE_DESCRIPTION;
+import static com.epam.esm.dao.mapper.MapperConstant.CERTIFICATE_DURATION;
+import static com.epam.esm.dao.mapper.MapperConstant.CERTIFICATE_ID;
+import static com.epam.esm.dao.mapper.MapperConstant.CERTIFICATE_LAST_UPDATE_DATE;
+import static com.epam.esm.dao.mapper.MapperConstant.CERTIFICATE_NAME;
+import static com.epam.esm.dao.mapper.MapperConstant.TAG_ID;
+import static com.epam.esm.dao.mapper.MapperConstant.TAG_NAME;
+
 
 @Component
 public class CertificateExtractor implements ResultSetExtractor<Map<Certificate, List<Tag>>> {
@@ -27,8 +35,8 @@ public class CertificateExtractor implements ResultSetExtractor<Map<Certificate,
                     .name(resultSet.getString(CERTIFICATE_NAME))
                     .description(resultSet.getString(CERTIFICATE_DESCRIPTION))
                     .duration(resultSet.getInt(CERTIFICATE_DURATION))
-                    .createDate(resultSet.getTimestamp(CERTIFICATE_CREATE_DATE).toLocalDateTime())
-                    .lastUpdateDate(resultSet.getTimestamp(CERTIFICATE_LAST_UPDATE_DATE).toLocalDateTime())
+                    .createDate(resultSet.getTimestamp(CERTIFICATE_CREATE_DATE).toInstant())
+                    .lastUpdateDate(resultSet.getTimestamp(CERTIFICATE_LAST_UPDATE_DATE).toInstant())
                     .build();
             data.putIfAbsent(certificate, new ArrayList<>());
             long tagId = resultSet.getLong(TAG_ID);

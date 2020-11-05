@@ -10,20 +10,18 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapper.CertificateMapper;
 import com.epam.esm.dto.mapper.FilterMapper;
 import com.epam.esm.dto.mapper.TagMapper;
-import com.epam.esm.exception.InvalidUserDataException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.service.TagService;
-import com.epam.esm.service.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,42 +34,40 @@ public class CertificateServiceImpl implements CertificateService {
     private final FilterMapper filterMapper;
     private final TagMapper tagMapper;
     private final TagService tagService;
-    private final Validator<CertificateDto> validator;
 
     @Override
     public CertificateDto getOne(Long id) {
-        Certificate one = certificateDao.getOne(id);
+        Certificate one = certificateDao.getOne(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found", id));
         return certificateMapper.fromModel(one);
     }
 
     @Override
     public List<CertificateDto> getAll() {
-        return certificateDao.getAllCertificates().stream().map(certificateMapper::fromModel).collect(Collectors.toList());
+        return certificateDao.getAll().stream().map(certificateMapper::fromModel).collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public Long createCertificate(CertificateDto certificate) {
-        if (!validator.validate(certificate)) {
-            throw new InvalidUserDataException("Invalid user data");
-        }
+    public CertificateDto createCertificate(CertificateDto certificate) {
         List<TagDto> tags = certificate.getTags();
         Certificate model = certificateMapper.toModel(certificate);
-        model.setCreateDate(LocalDateTime.now());
-        model.setLastUpdateDate(LocalDateTime.now());
-        Long insertedCertificateId = certificateDao.insertCertificate(model);
-        if (!Objects.isNull(tags)) {
-            List<Long> insertedTagsIds = tags.stream().map(tagService::createTag).collect(Collectors.toList());
-            certificateDao.insertCertificateTagLink(insertedCertificateId, insertedTagsIds);
-        }
-        return insertedCertificateId;
+        model.setCreateDate(Instant.now());
+        model.setLastUpdateDate(Instant.now());
+        Certificate insertedCertificate = certificateDao.insert(model);
+        List<Long> insertedTagsIds = tags.stream()
+                .map(tagService::createTag)
+                .map(TagDto::getId)
+                .collect(Collectors.toList());
+        certificateDao.insertCertificateTagLink(insertedCertificate.getId(), insertedTagsIds);
+        return certificateMapper.fromModel(insertedCertificate);
+
     }
 
     @Transactional
     @Override
     public void deleteCertificate(Long id) {
         certificateDao.deleteCertificateLink(id);
-        certificateDao.deleteCertificate(id);
+        certificateDao.delete(id);
     }
 
     @Override
@@ -93,13 +89,14 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public void updateCertificate(CertificateDto certificateDto) {
         Certificate certificate = certificateMapper.toModel(certificateDto);
-        certificate.setLastUpdateDate(LocalDateTime.now());
-        certificateDao.updateCertificate(certificate);
+        certificate.setLastUpdateDate(Instant.now());
+        certificateDao.update(certificate);
         List<TagDto> tags = certificateDto.getTags();
-        if (!Objects.isNull(tags)) {
-            List<Long> insertedTagsIds = tags.stream().map(tagService::createTag).collect(Collectors.toList());
-            certificateDao.insertCertificateTagLink(certificateDto.getId(), insertedTagsIds);
-        }
+        List<Long> insertedTagsIds = tags.stream()
+                .map(tagService::createTag)
+                .map(TagDto::getId)
+                .collect(Collectors.toList());
+        certificateDao.insertCertificateTagLink(certificateDto.getId(), insertedTagsIds);
     }
 
     @Override

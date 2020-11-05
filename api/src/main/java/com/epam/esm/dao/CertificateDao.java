@@ -7,21 +7,13 @@ import com.epam.esm.domain.Tag;
 import java.util.List;
 import java.util.Map;
 
-public interface CertificateDao {
-
-    Certificate getOne(Long id);
-
-    List<Certificate> getAllCertificates();
-
-    Long insertCertificate(Certificate certificate);
+public interface CertificateDao extends Dao<Certificate> {
 
     void insertCertificateTagLink(Long certificateId, List<Long> tagsId);
 
     void deleteCertificateLink(Long id);
 
-    void deleteCertificate(Long id);
-
     Map<Certificate, List<Tag>> filterCertificate(Filter filter);
 
-    void updateCertificate(Certificate certificate);
+    void update(Certificate certificate);
 }

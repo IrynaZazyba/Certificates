@@ -16,8 +16,8 @@ public class FilterMapper {
                 .sort(filterDto.getSort())
                 .order(filterDto.getOrder())
                 .tagName(filterDto.getTagName())
-                .searchDescription(filterDto.getSearchDescription())
-                .searchName(filterDto.getSearchName())
+                .description(filterDto.getDescription())
+                .name(filterDto.getName())
                 .build();
     }
 }

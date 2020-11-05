@@ -19,8 +19,8 @@ public class CertificateRowMapper implements RowMapper<Certificate> {
                 .name(resultSet.getString(CERTIFICATE_NAME))
                 .description(resultSet.getString(CERTIFICATE_DESCRIPTION))
                 .duration(resultSet.getInt(CERTIFICATE_DURATION))
-                .createDate(resultSet.getTimestamp(CERTIFICATE_CREATE_DATE).toLocalDateTime())
-                .lastUpdateDate(resultSet.getTimestamp(CERTIFICATE_LAST_UPDATE_DATE).toLocalDateTime())
+                .createDate(resultSet.getTimestamp(CERTIFICATE_CREATE_DATE).toInstant())
+                .lastUpdateDate(resultSet.getTimestamp(CERTIFICATE_LAST_UPDATE_DATE).toInstant())
                 .build();
     }
 }

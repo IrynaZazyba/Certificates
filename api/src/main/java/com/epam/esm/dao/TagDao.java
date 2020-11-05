@@ -2,19 +2,11 @@ package com.epam.esm.dao;
 
 import com.epam.esm.domain.Tag;
 
-import java.util.List;
+import java.util.Optional;
 
-public interface TagDao {
-
-    Tag getOne(Long id);
-
-    List<Tag> getAllTags();
-
-    Long insertTag(Tag tag);
-
-    void deleteTag(Long id);
+public interface TagDao extends Dao<Tag> {
 
     void deleteTagLink(Long id);
 
-    Tag getByName(String name);
+    Optional<Tag> getByName(String name);
 }

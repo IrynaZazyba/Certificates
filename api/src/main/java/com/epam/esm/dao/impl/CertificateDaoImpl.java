@@ -6,7 +6,6 @@ import com.epam.esm.dao.mapper.CertificateRowMapper;
 import com.epam.esm.domain.Certificate;
 import com.epam.esm.domain.Filter;
 import com.epam.esm.domain.Tag;
-import com.epam.esm.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,9 +16,11 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -52,38 +53,36 @@ public class CertificateDaoImpl implements CertificateDao {
     private final CertificateExtractor certificateExtractor;
 
     @Override
-    public Certificate getOne(Long id) {
+    public Optional<Certificate> getOne(Long id) {
         try {
-            return jdbcTemplate.queryForObject(GET_BY_ID, new Object[]{id}, certificateRowMapper);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_BY_ID, new Object[]{id}, certificateRowMapper));
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Resource not found", id);
+            return Optional.empty();
         }
     }
 
     @Override
-    public List<Certificate> getAllCertificates() {
-        try {
-            return jdbcTemplate.query(GET_All, certificateRowMapper);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Resource not found");
-        }
+    public List<Certificate> getAll() {
+        return jdbcTemplate.query(GET_All, certificateRowMapper);
     }
 
     @Override
-    public Long insertCertificate(Certificate certificate) {
+    public Certificate insert(Certificate certificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement ps = connection.prepareStatement(INSERT_CERTIFICATE, new String[]{"id"});
                     ps.setString(1, certificate.getName());
                     ps.setString(2, certificate.getDescription());
-                    ps.setTimestamp(3, Timestamp.valueOf(certificate.getCreateDate()));
-                    ps.setTimestamp(4, Timestamp.valueOf(certificate.getLastUpdateDate()));
+                    ps.setTimestamp(3, Timestamp.from(certificate.getCreateDate()));
+                    ps.setTimestamp(4, Timestamp.from(certificate.getLastUpdateDate()));
                     ps.setInt(5, certificate.getDuration());
                     return ps;
                 },
                 keyHolder);
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        long id = keyHolder.getKey().longValue();
+        certificate.setId(id);
+        return certificate;
     }
 
     @Override
@@ -97,21 +96,56 @@ public class CertificateDaoImpl implements CertificateDao {
     }
 
     @Override
-    public void deleteCertificate(Long id) {
+    public void delete(Long id) {
         this.jdbcTemplate.update(DELETE_CERTIFICATE, id);
     }
 
     @Override
     public Map<Certificate, List<Tag>> filterCertificate(Filter filter) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(GET_BY_FILTER);
+        List<Object> data = new ArrayList<>();
+
+        if (!Objects.isNull(filter.getTagName())) {
+            stringBuilder.append(" AND tag.name = ?");
+            data.add(filter.getTagName());
+        }
+
+        if (!Objects.isNull(filter.getName())) {
+            stringBuilder.append(" AND certificate.name LIKE ?");
+            data.add("%" + filter.getName() + "%");
+        }
+
+        if (!Objects.isNull(filter.getDescription())) {
+            stringBuilder.append(" AND certificate.description LIKE ?");
+            data.add("%" + filter.getDescription() + "%");
+        }
+
+        if (!Objects.isNull(filter.getSort()) && filter.getSort().equals("name")) {
+            stringBuilder.append(" ORDER BY certificate.name");
+        }
+
+        if (!Objects.isNull(filter.getSort()) && filter.getSort().equals("createDate"))
+            stringBuilder.append(" ORDER BY certificate.createDate");
+
+        if (!Objects.isNull(filter.getSort()) && !Objects.isNull(filter.getOrder()) && filter.getOrder().equals("ASC"))
+            stringBuilder.append(" ASC");
+
+        if (!Objects.isNull(filter.getSort()) && !Objects.isNull(filter.getOrder()) && filter.getOrder().equals("DESC"))
+            stringBuilder.append(" DESC");
+
+        String query = String.valueOf(stringBuilder);
+
+        Map<Certificate, List<Tag>> result = new HashMap<>();
         try {
-            return jdbcTemplate.query(createFilterQuery(filter), certificateExtractor);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Resource not found");
+            return jdbcTemplate.query(query, data.toArray(), certificateExtractor);
+        } catch (Exception e) {
+            return result;
         }
     }
 
     @Override
-    public void updateCertificate(Certificate certificate) {
+    public void update(Certificate certificate) {
         List<Object> data = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(UPDATE_CERTIFICATE);
@@ -136,35 +170,6 @@ public class CertificateDaoImpl implements CertificateDao {
         stringBuilder.append(" WHERE id=?");
         data.add(certificate.getId());
         this.jdbcTemplate.update(String.valueOf(stringBuilder), data.toArray());
-    }
-
-    private String createFilterQuery(Filter filter) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(GET_BY_FILTER);
-
-        if (!Objects.isNull(filter.getTagName()))
-            stringBuilder.append(" AND tag.name = '").append(filter.getTagName()).append("'");
-
-        if (!Objects.isNull(filter.getSearchName()))
-            stringBuilder.append(" AND certificate.name LIKE '%").append(filter.getSearchName()).append("%'");
-
-        if (!Objects.isNull(filter.getSearchDescription()))
-            stringBuilder.append(" AND certificate.description LIKE '%").
-                    append(filter.getSearchDescription()).append("%'");
-
-        if (!Objects.isNull(filter.getSort()) && filter.getSort().equals("name"))
-            stringBuilder.append(" ORDER BY ").append("certificate.name");
-
-        if (!Objects.isNull(filter.getSort()) && filter.getSort().equals("createDate"))
-            stringBuilder.append(" ORDER BY ").append("certificate.createDate");
-
-        if (!Objects.isNull(filter.getSort()) && !Objects.isNull(filter.getOrder()) && filter.getOrder().equals("ASC"))
-            stringBuilder.append(" ASC");
-
-        if (!Objects.isNull(filter.getSort()) && !Objects.isNull(filter.getOrder()) && filter.getOrder().equals("DESC"))
-            stringBuilder.append(" DESC");
-
-        return String.valueOf(stringBuilder);
     }
 
 }

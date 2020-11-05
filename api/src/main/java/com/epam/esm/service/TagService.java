@@ -10,7 +10,7 @@ public interface TagService {
 
     List<TagDto> getAllTags();
 
-    Long createTag(TagDto tag);
+    TagDto createTag(TagDto tag);
 
     void deleteTag(Long id);
 }

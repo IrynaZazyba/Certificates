@@ -3,7 +3,6 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.mapper.TagRowMapper;
 import com.epam.esm.domain.Tag;
-import com.epam.esm.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,30 +29,30 @@ public class TagDaoImpl implements TagDao {
     private final TagRowMapper tagRowMapper;
 
     @Override
-    public Tag getOne(Long id) {
+    public Optional<Tag> getOne(Long id) {
         try {
-            return jdbcTemplate.queryForObject(GET_BY_ID, new Object[]{id}, tagRowMapper);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_BY_ID, new Object[]{id}, tagRowMapper));
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Resource not found", e, id);
+            return Optional.empty();
         }
     }
 
     @Override
-    public Tag getByName(String name) {
+    public Optional<Tag> getByName(String name) {
         try {
-            return jdbcTemplate.queryForObject(GET_BY_NAME, new Object[]{name}, tagRowMapper);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_BY_NAME, new Object[]{name}, tagRowMapper));
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Resource not found", e);
+            return Optional.empty();
         }
     }
 
     @Override
-    public List<Tag> getAllTags() {
+    public List<Tag> getAll() {
         return jdbcTemplate.query(GET_ALL, tagRowMapper);
     }
 
     @Override
-    public Long insertTag(Tag tag) {
+    public Tag insert(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
                 connection -> {
@@ -62,11 +61,13 @@ public class TagDaoImpl implements TagDao {
                     return ps;
                 },
                 keyHolder);
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        long generatedId = keyHolder.getKey().longValue();
+        tag.setId(generatedId);
+        return tag;
     }
 
     @Override
-    public void deleteTag(Long id) {
+    public void delete(Long id) {
         this.jdbcTemplate.update(DELETE_TAG, id);
     }
 

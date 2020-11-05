@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class Certificate implements Serializable {
     private Long id;
     private String name;
     private String description;
-    private LocalDateTime createDate;
-    private LocalDateTime lastUpdateDate;
+    private Instant createDate;
+    private Instant lastUpdateDate;
     private int duration;
     private List<Tag> tags = new ArrayList<>();
 

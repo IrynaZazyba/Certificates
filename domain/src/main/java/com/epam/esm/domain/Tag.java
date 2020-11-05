@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +18,6 @@ public class Tag implements Serializable {
     private static final long serialVersionUID = -8742791910266118756L;
     private Long id;
     private String name;
-    private Set<Certificate> certificates = new HashSet<>();
+    private List<Certificate> certificates = new ArrayList<>();
 
 }
