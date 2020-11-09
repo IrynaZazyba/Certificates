@@ -1,0 +1,16 @@
+INSERT INTO `tag` VALUES(111, 'tag1');
+INSERT INTO `certificate` VALUES (121, 'Upd1', 'fly', '2020-10-20 00:00:00', '2020-10-21 00:00:00', 7);
+INSERT INTO `certificate_has_tag` VALUES(121, 111);
+INSERT INTO `tag` VALUES(112, 'tag2');
+INSERT INTO `certificate_has_tag` VALUES(121, 112);
+INSERT INTO `tag` VALUES(113, 'tag3');
+INSERT INTO `certificate` VALUES (122, 'Upd2', 'boat', '2020-10-20 00:00:00', '2020-10-21 00:00:00', 7);
+INSERT INTO `certificate_has_tag` VALUES(122, 113);
+INSERT INTO `tag` VALUES(114, 'tag4');
+INSERT INTO `tag` VALUES(115, 'tag5');
+INSERT INTO `certificate` VALUES (123, 'Upd3', 'lake', '2020-10-20 00:00:00', '2020-10-21 00:00:00', 7);
+INSERT INTO `certificate_has_tag` VALUES(123, 114);
+INSERT INTO `certificate_has_tag` VALUES(123, 115);
+INSERT INTO `tag` VALUES(116, 'tag6');
+INSERT INTO `certificate` VALUES (124, 'Upd4', 'sea', '2020-10-20 00:00:00', '2020-10-21 00:00:00', 7);
+INSERT INTO `certificate_has_tag` VALUES(124, 116);
