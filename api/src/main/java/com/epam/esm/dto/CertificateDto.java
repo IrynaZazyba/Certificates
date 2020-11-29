@@ -35,22 +35,22 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
     private TagMapper tagMapper;
 
     private Long id;
-    @Size(min = 1, max = 50, message = "Name size is invalid")
-    @NotBlank
+    @Size(min = 1, max = 50, message = "{error.name.size}")
+    @NotBlank(message = "{error.name.mandatory}")
     private String name;
-    @Size(min = 1, max = 255, message = "Name size is invalid")
-    @NotBlank
+    @Size(min = 1, max = 255, message = "{error.name.size}")
+    @NotBlank(message = "{error.description.mandatory}")
     private String description;
     @JsonFormat(pattern = DATE_TIME_PATTERN, timezone = DATE_TIME_TIMEZONE)
     private Instant createDate;
     @JsonFormat(pattern = DATE_TIME_PATTERN, timezone = DATE_TIME_TIMEZONE)
     private Instant lastUpdateDate;
-    @Min(value = 1, message = "Duration must be bigger than 0")
-    @NotNull
+    @Min(value = 1, message = "{error.duration.size}")
+    @NotNull(message = "{error.duration.mandatory}")
     private Integer duration;
     private List<TagDto> tags;
-    @DecimalMin(value = "0.1", message = "Price must be bigger than 0.1")
-    @NotNull
+    @DecimalMin(value = "0.1", message = "{error.price}")
+    @NotNull(message = "{error.price.mandatory}")
     private BigDecimal price;
 
 

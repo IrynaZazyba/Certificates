@@ -70,7 +70,7 @@ public class TagController {
      */
     @RequestMapping(method = POST)
     @ResponseStatus(CREATED)
-    public TagDto createTag(@RequestBody @Valid TagDto tag) {
+    public TagDto createTag(@Valid @RequestBody TagDto tag) {
         return tagService.create(tag);
     }
 

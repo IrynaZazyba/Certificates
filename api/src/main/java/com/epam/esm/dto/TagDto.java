@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -20,8 +20,8 @@ import javax.validation.constraints.Size;
 public class TagDto extends RepresentationModel<TagDto> {
 
     private Long id;
-    @NotBlank(message = "Name is mandatory")
-    @Size(min = 1, max = 50, message = "Name size is invalid")
+    @NotNull(message = "{error.name.mandatory}")
+    @Size(min = 1, max = 50, message = "{error.name.size}")
     private String name;
 
     @JsonCreator

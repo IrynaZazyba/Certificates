@@ -15,11 +15,11 @@ import java.util.List;
 public class UserDto extends RepresentationModel<UserDto> {
 
     private Long id;
-    @NotBlank(message = "Name is mandatory")
-    @Size(min = 1, max = 50, message = "Username size is invalid")
+    @NotBlank(message = "{error.name.mandatory}")
+    @Size(min = 1, max = 50, message = "{error.username.size}")
     private String username;
-    @NotBlank(message = "Name is mandatory")
-    @Size(min = 1, max = 50, message = "Surname size is invalid")
+    @NotBlank(message = "{error.name.mandatory}")
+    @Size(min = 1, max = 50, message = "{error.surname.size}")
     private String surname;
     private List<OrderDto> orders;
 
