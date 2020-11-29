@@ -15,7 +15,7 @@ public class FilterMapper {
         return Filter.builder()
                 .sort(filterDto.getSort())
                 .order(filterDto.getOrder())
-                .tagName(filterDto.getTagName())
+                .tagNames(filterDto.getTagNames())
                 .description(filterDto.getDescription())
                 .name(filterDto.getName())
                 .build();

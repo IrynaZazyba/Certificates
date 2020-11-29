@@ -1,5 +1,7 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.domain.Sorting;
+import com.epam.esm.domain.SortingField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FilterDto {
 
-    private String sort;
-    private String order;
-    private String tagName;
+    private SortingField sort;
+    private Sorting order;
+    private String[] tagNames;
     private String name;
     private String description;
 

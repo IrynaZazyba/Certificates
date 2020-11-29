@@ -1,12 +1,13 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.TagDao;
 import com.epam.esm.domain.Tag;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.mapper.TagMapper;
 import com.epam.esm.exception.ResourceAlreadyExistException;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.repository.TagDao;
 import com.epam.esm.service.TagService;
+import com.epam.esm.util.Paginator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
 
-    private final TagDao tagDao;
     private final TagMapper tagMapper;
+    private final TagDao tagDao;
 
     @Override
     public TagDto getOne(Long id) {
@@ -29,15 +30,19 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<TagDto> getAll() {
-        return tagDao.getAll().stream().map(tagMapper::fromModelWithoutCertificate).collect(Collectors.toList());
+    public List<TagDto> getAll(Paginator paginator) {
+        return tagDao.getAll(paginator)
+                .stream()
+                .map(tagMapper::fromModelWithoutCertificate)
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public TagDto create(TagDto tag) {
-        Optional<Tag> byName = tagDao.getByName(tag.getName());
+        Optional<Tag> byName = tagDao.findByName(tag.getName());
         if (byName.isEmpty()) {
-            Tag insertedTag = tagDao.insert(tagMapper.toModelWithoutCertificate(tag));
+            Tag insertedTag = tagDao.save(tagMapper.toModelWithoutCertificate(tag));
             return tagMapper.fromModelWithoutCertificate(insertedTag);
         } else {
             throw new ResourceAlreadyExistException("Resource already exists", byName.get().getId());
@@ -47,7 +52,11 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(Long id) {
-        tagDao.deleteTagLink(id);
-        tagDao.delete(id);
+        tagDao.deleteById(id);
+    }
+
+    @Override
+    public Long getMostPopularTagByOrderSum(Long userId) {
+        return tagDao.filterTags(userId);
     }
 }
