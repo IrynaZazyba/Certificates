@@ -19,16 +19,10 @@ public class CertificateMapper {
     private final TagMapper tagMapper;
 
     public CertificateDto fromModel(Certificate certificate) {
-        return CertificateDto.builder()
-                .id(certificate.getId())
-                .name(certificate.getName())
-                .createDate(certificate.getCreateDate())
-                .lastUpdateDate(certificate.getLastUpdateDate())
-                .description(certificate.getDescription())
-                .duration(certificate.getDuration())
-                .tags(Objects.isNull(certificate.getTags()) ? null : tagMapper.mapToModel(certificate.getTags()))
-                .price(certificate.getPrice())
-                .build();
+        CertificateDto certificateDto = new CertificateDto(certificate);
+        certificateDto
+                .setTags(Objects.isNull(certificate.getTags()) ? null : tagMapper.mapToModel(certificate.getTags()));
+        return certificateDto;
     }
 
     public Certificate toModel(CertificateDto certificate) {

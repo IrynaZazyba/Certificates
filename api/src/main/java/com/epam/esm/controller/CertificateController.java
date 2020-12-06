@@ -3,10 +3,12 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.FilterDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.validation.OnCreate;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.util.Paginator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+@Validated
 @RestController
 @RequestMapping(value = "/certificates")
 @RequiredArgsConstructor
@@ -76,6 +79,7 @@ public class CertificateController {
      */
     @RequestMapping(method = POST)
     @ResponseStatus(CREATED)
+    @Validated(OnCreate.class)
     public CertificateDto createCertificate(@RequestBody @Valid CertificateDto certificate) {
         CertificateDto certificateDto = certificateService.create(certificate);
         certificateDto.add(linkTo(CertificateController.class).slash(certificateDto.getId()).withSelfRel());
