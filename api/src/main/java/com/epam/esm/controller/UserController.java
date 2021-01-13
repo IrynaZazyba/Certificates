@@ -43,7 +43,12 @@ public class UserController {
     public UserDto getOne(@PathVariable("id") Long id) {
         UserDto user = userService.getOne(id);
         user.add(linkTo(UserController.class).slash(user.getId()).withSelfRel());
-        return user;
+        return user
+                .add(linkTo(methodOn(UserController.class).getUsersOrders(null, null, null))
+                        .withRel("orders"))
+                .add(linkTo(methodOn(UserController.class).getOrderInfo(null, null)).withRel("order info"))
+                .add(linkTo(UserController.class).withRel("all users"))
+                .add(linkTo(methodOn(UserController.class).getMostPopular(null)).withRel("popular"));
     }
 
     /**
@@ -61,7 +66,10 @@ public class UserController {
         List<UserDto> users = userService.getAll(paginator);
         users.forEach(user -> user.add(linkTo(UserController.class).slash(user.getId()).withSelfRel()));
         Link link = linkTo(UserController.class).withSelfRel();
-        return CollectionModel.of(users).add(link);
+        Link popular = linkTo(methodOn(UserController.class).getMostPopular(null)).withRel("popular");
+        Link orders = linkTo(methodOn(UserController.class).getUsersOrders(page, size, null)).withRel("orders");
+        Link orderInfo = linkTo(methodOn(UserController.class).getOrderInfo(null, null)).withRel("order info");
+        return CollectionModel.of(users).add(link).add(popular).add(orders).add(orderInfo);
     }
 
     /**

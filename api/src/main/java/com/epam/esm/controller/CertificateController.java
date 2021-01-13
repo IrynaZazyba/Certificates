@@ -51,6 +51,8 @@ public class CertificateController {
             tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).getTag(t.getId())).withRel("tag")));
         }
         certificate.add(linkTo(CertificateController.class).slash(certificate.getId()).withSelfRel());
+        certificate.add(linkTo(methodOn(CertificateController.class).getAll(null,null))
+                .withRel("all certificates"));
         return certificate;
     }
 
@@ -68,7 +70,10 @@ public class CertificateController {
         Paginator paginator = new Paginator(size, page);
         List<CertificateDto> certificates = certificateService.getAll(paginator);
         addLink(certificates);
-        return CollectionModel.of(certificates).add(linkTo(CertificateController.class).withSelfRel());
+        CollectionModel<CertificateDto> certificateDtos = CollectionModel.of(certificates);
+        certificateDtos.add(linkTo(methodOn(CertificateController.class)
+                .filterCertificates(page, size, null)).withRel("filter"));
+        return certificateDtos.add(linkTo(CertificateController.class).withSelfRel());
     }
 
     /**
