@@ -8,11 +8,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -41,7 +51,7 @@ public class AdviceController extends ResponseEntityExceptionHandler {
         String errorCode = String.valueOf(NOT_FOUND.value()) + ex.getId();
         DefaultExceptionInfo info = new DefaultExceptionInfo();
         info.setErrorMessage(messageSource
-                .getMessage(RESOURCE_NOT_FOUND, new Object[]{ex.getId()},  LocaleContextHolder.getLocale()));
+                .getMessage(RESOURCE_NOT_FOUND, new Object[]{ex.getId()}, LocaleContextHolder.getLocale()));
         info.setErrorCode(errorCode);
         return new ResponseEntity<>(
                 info, new HttpHeaders(), NOT_FOUND);
@@ -86,6 +96,30 @@ public class AdviceController extends ResponseEntityExceptionHandler {
                 info, new HttpHeaders(), BAD_REQUEST);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(
+                errors, new HttpHeaders(), BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+        Map<String, String> errors = ex.getConstraintViolations().stream().collect(Collectors.toMap(
+                v -> v.getPropertyPath().toString(),
+                ConstraintViolation::getMessage));
+        return ResponseEntity.status(BAD_REQUEST).body(errors);
+    }
+
     /**
      * Handle server exception
      *
@@ -102,5 +136,6 @@ public class AdviceController extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(
                 info, new HttpHeaders(), INTERNAL_SERVER_ERROR);
     }
+
 
 }

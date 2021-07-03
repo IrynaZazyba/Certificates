@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
@@ -24,14 +24,15 @@ import java.util.List;
 @Builder
 @Entity
 @Table
-public class Tag {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    @ManyToMany(mappedBy = "tags")
-    private List<Certificate> certificates;
+    private String username;
+    private String surname;
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
     @Column(name = "operation")
     private String operation;
     @Column(name = "timestamp")
